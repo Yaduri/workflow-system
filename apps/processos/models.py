@@ -181,19 +181,24 @@ class InstanciaProcesso(models.Model):
         return fases_disponiveis
 
     def get_dados_formatados(self):
-        """Retorna os dados do processo formatados com os labels dos campos"""
+        """Retorna os dados do processo formatados e agrupados"""
         from apps.core.models import CampoFormulario
         
         dados_formatados = {}
-        campos = CampoFormulario.objects.filter(tipo_processo=self.tipo_processo)
+        campos = CampoFormulario.objects.filter(
+            tipo_processo=self.tipo_processo
+        ).order_by('ordem', 'id')
         
         for campo in campos:
-            valor = self.dados.get(campo.nome_campo)
-            if valor is not None:
-                dados_formatados[campo.label] = {
-                    'valor': valor,
-                    'tipo': campo.tipo_campo,
-                    'grupo': campo.grupo or 'Outros'
-                }
+            grupo_nome = campo.grupo or 'Informações Gerais'
+            valor = self.dados.get(campo.nome_campo, '')
+            
+            if grupo_nome not in dados_formatados:
+                dados_formatados[grupo_nome] = {}
+            
+            dados_formatados[grupo_nome][campo.label] = {
+                'valor': valor,
+                'tipo': campo.tipo_campo,
+            }
         
         return dados_formatados
