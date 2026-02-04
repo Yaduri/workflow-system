@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block title %}Formulários Externos - Configurações{% endblock %}
+
+{% block content %}
+<div class="fade-in-up">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="fas fa-globe me-3"></i>Formulários Externos</h1>
+        <div>
+            <a href="{% url 'configuracoes:index' %}" class="btn-outline-custom btn-custom me-2">
+                <i class="fas fa-arrow-left me-2"></i>Voltar
+            </a>
+            <a href="{% url 'configuracoes:formularios_externos_criar' %}" class="btn-primary-custom btn-custom">
+                <i class="fas fa-plus me-2"></i>Novo Formulário
+            </a>
+        </div>
+    </div>
+    
+    <div class="table-custom">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>Título</th>
+                    <th>Tipo de Processo</th>
+                    <th>Link Público</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for form in formularios %}
+                <tr>
+                    <td><strong>{{ form.titulo }}</strong></td>
+                    <td>{{ form.tipo_processo.nome }}</td>
+                    <td>
+                        <div class="input-group input-group-sm">
+                            <input type="text" class="form-control" 
+                                   value="{{ request.scheme }}://{{ request.get_host }}/formulario/{{ form.token }}/" 
+                                   id="link-{{ form.id }}" readonly>
+                            <button class="btn btn-outline-secondary" type="button" 
+                                    onclick="copyLink('link-{{ form.id }}')">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                    </td>
+                    <td>
+                        {% if form.ativo %}
+                            <span class="badge bg-success">Ativo</span>
+                        {% else %}
+                            <span class="badge bg-danger">Inativo</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="/formulario/{{ form.token }}/" target="_blank" class="btn btn-sm btn-info">
+                            <i class="fas fa-external-link-alt"></i> Ver
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center py-5">
+                        <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">Nenhum formulário externo cadastrado.</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+function copyLink(elementId) {
+    const input = document.getElementById(elementId);
+    input.select();
+    document.execCommand('copy');
+    alert('Link copiado para a área de transferência!');
+}
+</script>
+{% endblock %}

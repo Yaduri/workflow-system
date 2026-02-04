@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% block title %}Gerenciar Fases - {{ tipo.nome }}{% endblock %}
+
+{% block content %}
+<div class="fade-in-up">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1><i class="fas fa-stream me-3"></i>Fases - {{ tipo.nome }}</h1>
+            <p class="text-muted mb-0">Configure o workflow do processo</p>
+        </div>
+        <a href="{% url 'configuracoes:tipos_processo_lista' %}" class="btn-outline-custom btn-custom">
+            <i class="fas fa-arrow-left me-2"></i>Voltar
+        </a>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card-custom">
+                <div class="card-header">Fases Cadastradas</div>
+                <div class="card-body">
+                    {% if fases %}
+                    <div class="list-group">
+                        {% for fase in fases %}
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">
+                                        <span class="badge me-2" style="background-color: {{ fase.cor_badge }};">{{ fase.ordem }}</span>
+                                        {{ fase.nome }}
+                                    </h6>
+                                    <small class="text-muted">
+                                        Setor: {{ fase.get_setor_responsavel_display }}
+                                        {% if fase.fase_inicial %} | <span class="badge bg-success">Inicial</span>{% endif %}
+                                        {% if fase.fase_final %} | <span class="badge bg-danger">Final</span>{% endif %}
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted text-center py-4">Nenhuma fase cadastrada.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card-custom">
+                <div class="card-header">Adicionar Nova Fase</div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label-custom">Nome <span class="text-danger">*</span></label>
+                            <input type="text" name="nome" class="form-control-custom" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label-custom">Ordem <span class="text-danger">*</span></label>
+                            <input type="number" name="ordem" class="form-control-custom" value="{{ fases.count|add:1 }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label-custom">Setor <span class="text-danger">*</span></label>
+                            <select name="setor_responsavel" class="form-control-custom" required>
+                                <option value="COMERCIAL">Comercial</option>
+                                <option value="FINANCEIRO">Financeiro</option>
+                                <option value="OPERACOES">Operações</option>
+                                <option value="PD">P&D</option>
+                                <option value="ADMIN">Administração</option>
+                                <option value="TODOS">Todos</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label-custom">Cor</label>
+                            <input type="color" name="cor_badge" class="form-control form-control-color" value="#6c757d">
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input type="checkbox" name="fase_inicial" class="form-check-input" id="fase_inicial">
+                                <label class="form-check-label" for="fase_inicial">Fase inicial</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" name="fase_final" class="form-check-input" id="fase_final">
+                                <label class="form-check-label" for="fase_final">Fase final</label>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-primary-custom btn-custom w-100">
+                            <i class="fas fa-plus me-2"></i>Adicionar
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Processos - Sistema de Workflow{% endblock %}
+
+{% block content %}
+<div class="fade-in-up">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="fas fa-tasks me-3"></i>Processos</h1>
+    </div>
+
+    <!-- Estatísticas -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card-custom">
+                <div class="card-body text-center">
+                    <h3 class="text-primary mb-2">{{ stats.total }}</h3>
+                    <p class="text-muted mb-0">Total de Processos</p>
+                </div>
+            </div>
+        </div>
+        {% for fase in stats.por_fase|slice:":3" %}
+        <div class="col-md-3">
+            <div class="card-custom">
+                <div class="card-body text-center">
+                    <h3 class="text-secondary mb-2">{{ fase.count }}</h3>
+                    <p class="text-muted mb-0">{{ fase.fase_atual__nome }}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Filtros -->
+    <div class="filter-section">
+        <h5>Filtros</h5>
+        <form method="get" class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label-custom">Buscar</label>
+                <input type="text" name="busca" class="form-control-custom" placeholder="Número ou dados..."
+                    value="{{ filtros.busca }}">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label-custom">Tipo de Processo</label>
+                <select name="tipo" class="form-control-custom">
+                    <option value="">Todos</option>
+                    {% for tipo in tipos_processo %}
+                    <option value="{{ tipo.id }}" {% if filtros.tipo == tipo.id|stringformat:"s" %}selected{% endif %}>
+                        {{ tipo.nome }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label-custom">Fase</label>
+                <select name="fase" class="form-control-custom">
+                    <option value="">Todas</option>
+                    {% for fase in fases %}
+                    <option value="{{ fase.id }}" {% if filtros.fase == fase.id|stringformat:"s" %}selected{% endif %}>
+                        {{ fase.nome }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label-custom">&nbsp;</label>
+                <button type="submit" class="btn-primary-custom btn-custom w-100">
+                    <i class="fas fa-search me-2"></i>Filtrar
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Lista de Processos -->
+    <div class="table-custom">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>Número</th>
+                    <th>Tipo</th>
+                    <th>Fase Atual</th>
+                    <th>Responsável</th>
+                    <th>Criado em</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for processo in page_obj %}
+                <tr>
+                    <td><strong>{{ processo.numero }}</strong></td>
+                    <td>{{ processo.tipo_processo.nome }}</td>
+                    <td>
+                        <span class="badge-fase"
+                            style="background-color: {{ processo.fase_atual.cor_badge }}; color: white;">
+                            {{ processo.fase_atual.nome }}
+                        </span>
+                    </td>
+                    <td>
+                        {% if processo.responsavel_atual %}
+                        <i class="fas fa-user me-2"></i>{{
+                        processo.responsavel_atual.get_full_name|default:processo.responsavel_atual.username }}
+                        {% else %}
+                        <span class="text-muted">Não atribuído</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ processo.criado_em|date:"d/m/Y H:i" }}</td>
+                    <td>
+                        <a href="{% url 'processos:detalhes' processo.id %}" class="btn btn-sm btn-primary-custom">
+                            <i class="fas fa-eye me-1"></i>Ver
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center py-5">
+                        <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">Nenhum processo encontrado.</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Paginação -->
+    {% if page_obj.has_other_pages %}
+    <div class="d-flex justify-content-center mt-4">
+        <nav>
+            <ul class="pagination">
+                {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+                </li>
+                {% endif %}
+
+                <li class="page-item active">
+                    <span class="page-link">{{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+                </li>
+
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">Próxima</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

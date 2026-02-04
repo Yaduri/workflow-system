@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Configurações - Sistema de Workflow{% endblock %}
+
+{% block content %}
+<div class="fade-in-up">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="fas fa-cog me-3"></i>Configurações do Sistema</h1>
+    </div>
+    
+    <!-- Estatísticas -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card-custom">
+                <div class="card-body text-center">
+                    <i class="fas fa-folder fa-3x text-primary mb-3"></i>
+                    <h3 class="mb-2">{{ stats.tipos_processo }}</h3>
+                    <p class="text-muted mb-0">Tipos de Processo</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card-custom">
+                <div class="card-body text-center">
+                    <i class="fas fa-stream fa-3x text-info mb-3"></i>
+                    <h3 class="mb-2">{{ stats.fases }}</h3>
+                    <p class="text-muted mb-0">Fases</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card-custom">
+                <div class="card-body text-center">
+                    <i class="fas fa-list fa-3x text-warning mb-3"></i>
+                    <h3 class="mb-2">{{ stats.campos }}</h3>
+                    <p class="text-muted mb-0">Campos</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card-custom">
+                <div class="card-body text-center">
+                    <i class="fas fa-users fa-3x text-success mb-3"></i>
+                    <h3 class="mb-2">{{ stats.usuarios }}</h3>
+                    <p class="text-muted mb-0">Usuários</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Menu de Configurações -->
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card-custom h-100">
+                <div class="card-header bg-primary text-white">
+                    <i class="fas fa-folder me-2"></i>Tipos de Processo
+                </div>
+                <div class="card-body">
+                    <p>Gerencie os tipos de processos disponíveis no sistema.</p>
+                    <a href="{% url 'configuracoes:tipos_processo_lista' %}" class="btn-primary-custom btn-custom">
+                        <i class="fas fa-list me-2"></i>Gerenciar Tipos
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 mb-4">
+            <div class="card-custom h-100">
+                <div class="card-header bg-info text-white">
+                    <i class="fas fa-globe me-2"></i>Formulários Externos
+                </div>
+                <div class="card-body">
+                    <p>Configure formulários públicos para receber solicitações de clientes.</p>
+                    <a href="{% url 'configuracoes:formularios_externos_lista' %}" class="btn-primary-custom btn-custom">
+                        <i class="fas fa-list me-2"></i>Gerenciar Formulários
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 mb-4">
+            <div class="card-custom h-100">
+                <div class="card-header bg-success text-white">
+                    <i class="fas fa-users me-2"></i>Usuários
+                </div>
+                <div class="card-body">
+                    <p>Gerencie usuários e permissões do sistema.</p>
+                    <a href="{% url 'configuracoes:usuarios_lista' %}" class="btn-primary-custom btn-custom">
+                        <i class="fas fa-list me-2"></i>Gerenciar Usuários
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 mb-4">
+            <div class="card-custom h-100">
+                <div class="card-header bg-secondary text-white">
+                    <i class="fas fa-shield-alt me-2"></i>Django Admin
+                </div>
+                <div class="card-body">
+                    <p>Acesse o painel administrativo completo do Django.</p>
+                    <a href="/admin/" target="_blank" class="btn-secondary-custom btn-custom">
+                        <i class="fas fa-external-link-alt me-2"></i>Abrir Admin
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

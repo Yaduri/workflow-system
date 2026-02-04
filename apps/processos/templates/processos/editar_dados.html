@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar Dados - {{ processo.numero }}{% endblock %}
+
+{% block content %}
+<div class="fade-in-up">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="fas fa-edit me-3"></i>Editar Dados do Processo</h1>
+        <a href="{% url 'processos:detalhes' processo.id %}" class="btn-outline-custom btn-custom">
+            <i class="fas fa-arrow-left me-2"></i>Voltar
+        </a>
+    </div>
+
+    <div class="card-custom">
+        <div class="card-header">
+            {{ processo.numero }} - {{ processo.tipo_processo.nome }}
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+
+                {% regroup campos by grupo as grupos_campos %}
+                {% for grupo in grupos_campos %}
+                <div class="mb-4">
+                    <h5 class="mb-3">{{ grupo.grouper|default:"Informações Gerais" }}</h5>
+
+                    {% for campo in grupo.list %}
+                    <div class="mb-3">
+                        <label class="form-label-custom">
+                            {{ campo.label }}
+                            {% if campo.obrigatorio %}<span class="text-danger">*</span>{% endif %}
+                        </label>
+
+                        {% if campo.tipo_campo == 'textarea' %}
+                        <textarea name="{{ campo.nome_campo }}" class="form-control-custom" rows="4" 
+                                  {% if campo.obrigatorio %}required{% endif %}></textarea>
+                        {% elif campo.tipo_campo == 'select' %}
+                        <select name="{{ campo.nome_campo }}" class="form-control-custom" {% if campo.obrigatorio
+                            %}required{% endif %}>
+                            <option value="">Selecione...</option>
+                            {% for opcao in campo.opcoes %}
+                            <option value="{{ opcao }}">
+                                {{ opcao }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        {% else %}
+                        <input type="{{ campo.tipo_campo }}" name="{{ campo.nome_campo }}" class="form-control-custom"
+                               {% if campo.obrigatorio %}required{% endif %}>
+                        {% endif %}
+
+                        {% if campo.ajuda %}
+                        <small class="text-muted">{{ campo.ajuda }}</small>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endfor %}
+
+                <div class="mb-4">
+                    <label class="form-label-custom">Observações sobre a Edição</label>
+                    <textarea name="observacoes" class="form-control-custom" rows="3"
+                        placeholder="Descreva as alterações realizadas..."></textarea>
+                </div>
+
+                <div class="text-end">
+                    <button type="submit" class="btn-primary-custom btn-custom">
+                        <i class="fas fa-save me-2"></i>Salvar Alterações
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

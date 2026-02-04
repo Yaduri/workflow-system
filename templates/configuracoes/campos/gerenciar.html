@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+{% block title %}Gerenciar Campos - {{ tipo.nome }}{% endblock %}
+
+{% block content %}
+<div class="fade-in-up">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1><i class="fas fa-list me-3"></i>Campos - {{ tipo.nome }}</h1>
+            <p class="text-muted mb-0">Configure os campos do formulário</p>
+        </div>
+        <a href="{% url 'configuracoes:tipos_processo_lista' %}" class="btn-outline-custom btn-custom">
+            <i class="fas fa-arrow-left me-2"></i>Voltar
+        </a>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card-custom">
+                <div class="card-header">Campos Cadastrados</div>
+                <div class="card-body">
+                    {% if campos %}
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Label</th>
+                                    <th>Tipo</th>
+                                    <th>Grupo</th>
+                                    <th>Obrigatório</th>
+                                    <th>Visível Externo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for campo in campos %}
+                                <tr>
+                                    <td><strong>{{ campo.label }}</strong></td>
+                                    <td><span class="badge bg-secondary">{{ campo.tipo_campo }}</span></td>
+                                    <td>{{ campo.grupo|default:"—" }}</td>
+                                    <td>
+                                        {% if campo.obrigatorio %}
+                                            <i class="fas fa-check text-success"></i>
+                                        {% else %}
+                                            <i class="fas fa-times text-muted"></i>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if campo.visivel_formulario_externo %}
+                                            <i class="fas fa-check text-success"></i>
+                                        {% else %}
+                                            <i class="fas fa-times text-muted"></i>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-muted text-center py-4">Nenhum campo cadastrado.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card-custom">
+                <div class="card-header">Adicionar Novo Campo</div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label-custom">Label <span class="text-danger">*</span></label>
+                            <input type="text" name="label" class="form-control-custom" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label-custom">Nome do Campo <span class="text-danger">*</span></label>
+                            <input type="text" name="nome_campo" class="form-control-custom" placeholder="nome_empresa" required>
+                            <small class="text-muted">Sem espaços, use underscore</small>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label-custom">Tipo <span class="text-danger">*</span></label>
+                            <select name="tipo_campo" class="form-control-custom" required>
+                                <option value="text">Texto</option>
+                                <option value="email">E-mail</option>
+                                <option value="tel">Telefone</option>
+                                <option value="number">Número</option>
+                                <option value="date">Data</option>
+                                <option value="textarea">Texto Longo</option>
+                                <option value="select">Seleção</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label-custom">Grupo</label>
+                            <input type="text" name="grupo" class="form-control-custom" placeholder="Dados da Empresa">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label-custom">Ordem</label>
+                            <input type="number" name="ordem" class="form-control-custom" value="{{ campos.count|add:1 }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label-custom">Placeholder</label>
+                            <input type="text" name="placeholder" class="form-control-custom">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label-custom">Texto de Ajuda</label>
+                            <input type="text" name="ajuda" class="form-control-custom">
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input type="checkbox" name="obrigatorio" class="form-check-input" id="obrigatorio">
+                                <label class="form-check-label" for="obrigatorio">Obrigatório</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" name="visivel_formulario_externo" class="form-check-input" id="visivel" checked>
+                                <label class="form-check-label" for="visivel">Visível no formulário externo</label>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-primary-custom btn-custom w-100">
+                            <i class="fas fa-plus me-2"></i>Adicionar
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
